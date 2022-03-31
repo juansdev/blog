@@ -1,0 +1,66 @@
+<div class="col-md-12 mt-3 text-center">
+  <h1>{{page_title}}</h1>
+  <p *ngIf="!is_edit">
+	  Añade un nuevo articulo al blog
+  </p>
+  <p *ngIf="is_edit && post">
+    Modifica el post {{post.title}}
+  </p>
+  <hr>
+  <!-- Mensajes de alerta - CREAR ENTRADA -->
+  <div class="alert alert-success col-md-5 my-3 mx-auto" *ngIf="status=='success' && !is_edit">
+    ¡La entrada se ha creado correctamente!
+  </div>
+  <div class="alert alert-danger col-md-5 my-3 mx-auto" *ngIf="status=='error' && !is_edit">
+    ¡Error en la creación de la entrada!
+  </div>
+  <!-- Mensajes de alerta - EDITAR ENTRADA -->
+  <div class="alert alert-success col-md-5 my-3 mx-auto" *ngIf="status=='success' && is_edit">
+    ¡La entrada ha sido modificada correctamente!
+  </div>
+  <div class="alert alert-danger col-md-5 my-3 mx-auto" *ngIf="status=='error' && is_edit">
+    ¡Error en la modificación de la entrada!
+  </div>
+  <!-- Formulario de crear entrada -->
+  <form class="col-md-5 mx-auto ml-0 pl-0" #postNew="ngForm" (ngSubmit)="onSubmit(postNew)">
+    <div class="form-group">
+      <label for="title">Título</label>
+      <input type="text" name="title" #title="ngModel" [(ngModel)]="post.title" class="form-control" required>
+      <small *ngIf="!title.valid && title.touched" class="invalid-feedback d-block">
+        El título no es valido
+      </small>
+    </div>
+    <div class="form-group">
+      <label for="content">Contenido</label>
+      <textarea [froalaEditor]="floala_options" name="content" class="form-control" #content="ngModel" [(ngModel)]="post.content" required>
+      </textarea>
+      <small *ngIf="!content.valid && content.touched" class="invalid-feedback d-block">
+        El contenido no es valido
+      </small>
+    </div>
+    <div class="form-group">
+      <label for="category_id">Categoria</label>
+      <select name="category_id" #category="ngModel" [(ngModel)]="post.category_id" class="form-control">
+        <option *ngFor="let category of categories" value="{{category.id}}">
+          {{category.name}}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="image">Imagen</label>
+      <div *ngIf="post && post.image">
+        <img src="{{url+'post/image/'+post.image}}" class="avatar_edit my-1">
+      </div>
+      <hr>
+      <hr>
+      <angular-file-uploader
+      [config]="afuConfig"
+      (ApiResponse)="imageUpload($event)">
+      </angular-file-uploader>
+    </div>
+
+    <input type="submit" value="Enviar" class="btn btn-success d-block w-100" [disabled]="postNew.invalid">
+  </form>
+  <div class="my-3"></div>
+</div>
